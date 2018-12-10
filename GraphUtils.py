@@ -6,6 +6,15 @@ class Airport:
     """
     __slots__ = "name", "coincidence"
 
+    def __eq__(self, other):
+        return self.name == other.getName()
+
+    def getName(self):
+        return self.name
+
+    def getCoincidence(self):
+        return self.coincidence
+
 
 class Flight:
     """
@@ -17,3 +26,12 @@ class Flight:
     places: numero di posti disponibili sul volo
     """
     __slots__ = "start", "destination", "left", "arrival", "places"
+
+    def getLeaveTime(self):
+        return self.left
+
+    def getArrivalTime(self):
+        return self.arrival
+
+    def getDuration(self):
+        return self.arrival - self.left
