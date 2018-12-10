@@ -1,5 +1,5 @@
 from TdP_collections.graphs.graph import Graph
-from TdP_collections.graphs import dfs
+from TdP_collections.graphs.dfs import DFS, DFS_complete
 
 
 def bipartite(G: Graph):
@@ -14,10 +14,13 @@ def bipartite(G: Graph):
     dato un grafo non diretto, colorarlo con al più k colori in modo che non esistano due vertici adiacenti
     dello stesso colore. Nel caso il problema si riduce alla 2-colorabilità.
     """
+    forest = {}                                 # spanning forest del grafo G
     discovered = {}                             # dizionario per tenere traccia dei nodi visitati
     color = {}                                  # dizionario per tenere traccia dei colori dei nodi
     X = []                                      # partizioni del grafo
     Y = []
+    # verifica se il grafo è connesso e ne definisce le componenti connesse
+    forest = DFS_complete(G)
     for node in G.vertices():                   # inizializza i colori dei nodi
         color[node] = False
     start_node = color.keys()[0]                # prendi un nodo del grafo da cui partire per una visita DFS
