@@ -17,21 +17,21 @@ def bipartite(G: Graph):
     forest = {}                                 # spanning forest del grafo G
     discovered = {}                             # dizionario per tenere traccia dei nodi visitati
     color = {}                                  # dizionario per tenere traccia dei colori dei nodi
-    X = []                                      # partizioni del grafo
-    Y = []
+    X = set()                                      # partizioni del grafo
+    Y = set()
     # verifica se il grafo è connesso e ne definisce le componenti connesse
     forest = DFS_complete(G)
     for node in G.vertices():                   # inizializza i colori dei nodi
         color[node] = False
-    start_node = color.keys()[0]                # prendi un nodo del grafo da cui partire per una visita DFS
+    start_node = list(color.keys())[0]                # prendi un nodo del grafo da cui partire per una visita DFS
     # applica la DFS modificata per verificare se il grafo è bipartito
     partition = dfs(G, start_node, discovered, color)
     if partition is not None:                   # popola le due partizioni del grafo
         for x in partition.items():
             if x[1] is True:
-                X.append(x[0])
+                X.add(x[0])
             else:
-                Y.append(x[0])
+                Y.add(x[0])
         return X,Y
     else:
         return partition
