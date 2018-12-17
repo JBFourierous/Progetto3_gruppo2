@@ -1,5 +1,4 @@
 from TdP_collections.graphs.graph import Graph
-from TdP_collections.graphs.dfs import DFS, DFS_complete
 
 
 def bipartite(G: Graph):
@@ -14,30 +13,34 @@ def bipartite(G: Graph):
     dato un grafo non diretto, colorarlo con al più k colori in modo che non esistano due vertici adiacenti
     dello stesso colore. Nel caso il problema si riduce alla 2-colorabilità.
     """
-    forest = {}                                 # spanning forest del grafo G
     discovered = {}                             # dizionario per tenere traccia dei nodi visitati
     color = {}                                  # dizionario per tenere traccia dei colori dei nodi
     X = set()                                      # partizioni del grafo
     Y = set()
+    partition = None
+
     # verifica se il grafo è connesso e ne definisce le componenti connesse
-    forest = DFS_complete(G)
     for node in G.vertices():                   # inizializza i colori dei nodi
-        color[node] = False
-    start_node = list(color.keys())[0]                # prendi un nodo del grafo da cui partire per una visita DFS
-    # applica la DFS modificata per verificare se il grafo è bipartito
-    partition = dfs(G, start_node, discovered, color)
-    if partition is not None:                   # popola le due partizioni del grafo
+        if node not in color:
+            color[node] = False
+    for v in G.vertices():
+        if v not in discovered:
+            partition = color_dfs(G, v, discovered, color)
+            if partition is None:
+                return partition
+    if partition is not None:
+        # popola le due partizioni del grafo
         for x in partition.items():
             if x[1] is True:
                 X.add(x[0])
             else:
                 Y.add(x[0])
-        return X,Y
+        return X, Y
     else:
         return partition
 
 
-def dfs(g, u, discovered, color):
+def color_dfs(g, u, discovered, color):
     """
     Sovrascrive l'algoritmo della DFS per aggiungere la logica di controllo della 2-colorabilità
     Colora i nodi visitati in maniera alternata, se trova due nodi consecutivi con lo stesso colore
@@ -50,14 +53,18 @@ def dfs(g, u, discovered, color):
 
     ATTENZIONE: QUESTA IMPLEMENTAZIONE SUPPONE CHE IL GRAFO SIA CONNESSO
     """
-    for e in g.incident_edges(u):                           # per ogni arco uscente da u
+    for e in g.incident_edges(u):  # per ogni arco uscente da u
         v = e.opposite(u)
-        if v not in discovered:                             # v è un nodo non visitato
-            color[v] = not color[u]                         # assegagli il colore opposto del nodo padre
-            discovered[v] = e                               # aggiorna gli archi discovey
-            if dfs(g, v, discovered, color) is None:        # riapplica ricorsivamente verificando che il sottoinsieme è bipartito
+        if v not in discovered:  # v è un nodo non visitato
+            color[v] = not color[u]  # assegagli il colore opposto del nodo padre
+            discovered[v] = e  # aggiorna gli archi discovey
+            if color_dfs(g, v, discovered, color) is None:  # riapplica ricorsivamente verificando che il sottoinsieme è bipartito
                 return None
-        elif color[v] == color[u]:                          # nodo già visitato, 2 nodi consecutivi con lo stesso colore viola la 2-colorabilità
+        elif color[v] == color[u]:  # nodo già visitato, 2 nodi consecutivi con lo stesso colore viola la 2-colorabilità
             return None
     return color
+
+
+
+
 
