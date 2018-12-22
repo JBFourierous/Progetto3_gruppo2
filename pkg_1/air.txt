@@ -1,3 +1,0 @@
-MXP 0
-BGY 0
-CDG 0
