@@ -3,7 +3,7 @@ from typing import List
 from typing import Dict
 from TdP_collections.queue.array_queue import ArrayQueue
 # from .utils import *
-from utils import *
+from pkg_1.utils import *
 from datetime import timedelta
 
 
@@ -28,8 +28,8 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
                     arrival_time: timedelta, T: timedelta, solution: List, paths: List):
     # se ho raggiunto la destinazione posso salvare il percorso seguito
     if source == sink:
+        # paths.append(solution[1].copy())
         paths.append(list((solution[1])))
-        # paths.append(solution[1])
     else:
         # per ogni volo in partenza dall'aeroporto in cui sono
         for flight in schedule[source]:
