@@ -20,6 +20,17 @@ class Flight:
         self.arrival = arrival
         self.places = places
 
+    def __eq__(self, o: object) -> bool:
+        return self.start == o.getStart() and self.destination == o.getDestination() and self.leave == o.getLeaveTime() \
+                        and self.arrival == o.getArrivalTime() and self.places == o.getPlaces()
+
+    def __hash__(self) -> int:
+        return hash((self.start, self.destination, self.leave, self.arrival, self.places))
+
+    def __str__(self) -> str:
+        return self.start.getName() + " " + self.getDestination().getName() + " " + str(self.getLeaveTime()) + " " + \
+               str(self.getArrivalTime()) + " " + str(self.getPlaces())
+
     def getLeaveTime(self) -> time:
         return self.leave
 
