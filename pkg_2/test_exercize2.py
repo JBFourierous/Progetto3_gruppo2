@@ -1,14 +1,14 @@
 from pkg_1.utils import initialize_schedule
 from datetime import timedelta
-from pkg_1.ex_1 import list_routes
+from pkg_2.exercise_2 import find_route
 
 if __name__ == "__main__":
-    airports, schedule = initialize_schedule("airports.txt", "flight.txt")
+    airports, schedule = initialize_schedule("../pkg_1/airports.txt", "../pkg_1/flight.txt")
 
     # for airport in airports:
     #     print(airport)
-    # for airport, listofflights in schedule.items():
-    #     for flight in listofflights:
+    # for airport, list_of_flights in schedule.items():
+    #     for flight in list_of_flights:
     #         print(airport, "flight: ", flight)
 
     start = airports[0]
@@ -17,13 +17,16 @@ if __name__ == "__main__":
     start_time = timedelta(hours=6, minutes=40)
     total_time = timedelta(hours=10)
 
-    paths = list_routes(schedule, start, end, start_time, total_time)
+    paths = find_route(schedule=schedule,
+                       airports=airports,
+                       start=start,
+                       dest=end,
+                       t=start_time)
     print("\nI want to go from " + str(start.getName()) + " to " + str(end.getName()) +
-          " starting at " + str(start_time) + " in max " + str(total_time))
+          " starting at " + str(start_time) + " in the shortest time possible ")
     if len(paths) != 0:
         for path in paths:
             print("--------------PATH----------- ")
-            for f in path:
-                print(f)
+            print(path)
     else:
         print("No flight available")
