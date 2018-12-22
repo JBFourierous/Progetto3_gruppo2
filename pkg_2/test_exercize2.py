@@ -3,7 +3,7 @@ from datetime import timedelta
 from pkg_2.exercise_2 import find_route
 
 if __name__ == "__main__":
-    airports, schedule = initialize_schedule("../pkg_1/airports.txt", "../pkg_1/flight.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
 
     # for airport in airports:
     #     print(airport)
@@ -30,3 +30,4 @@ if __name__ == "__main__":
             print(path)
     else:
         print("No flight available")
+
