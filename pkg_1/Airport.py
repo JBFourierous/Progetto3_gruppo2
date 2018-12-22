@@ -19,6 +19,9 @@ class Airport:
     def __eq__(self, other) -> bool:
         return self.name == other.getName()
 
+    def __contains__(self, item):
+        return self.name == item.name
+
     def __str__(self) -> str:
         return self.name + " " + str(self.coincidence)
 

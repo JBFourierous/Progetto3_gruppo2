@@ -1,5 +1,5 @@
 from datetime import timedelta
-from .Airport import Airport
+from pkg_1.Airport import Airport
 
 
 class Flight:
