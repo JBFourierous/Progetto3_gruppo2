@@ -1,7 +1,6 @@
 from pkg_1.Flight import Flight, Airport
-from datetime import timedelta
 from typing import List
-from typing import Dict
+from datetime import timedelta
 
 
 def c(a: Airport) -> timedelta:
@@ -58,7 +57,7 @@ def p(f: Flight) -> int:
     return f.getPlaces()
 
 
-def initialize_schedule(airports_file: str, flights_file: str) -> (List[Airport], Dict[Airport, List[Flight]]):
+def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], List[Flight]):
     """
     Funzione che legge da file i dati riguardanti aeroporti e voli e inizializza l'orario della compagnia
     :param airports_file: file contenente i dati degli aeroporti
@@ -67,45 +66,45 @@ def initialize_schedule(airports_file: str, flights_file: str) -> (List[Airport]
     """
     airports = list()
     flights = list()
-    schedule = dict()
-    file1, file2 = None, None
+    air_file, fli_file = None, None
     try:
-        file1 = open(airports_file, "r")
-        file2 = open(flights_file, "r")
+        air_file = open(airports_file, "r")
+        fli_file = open(flights_file, "r")
     except FileNotFoundError:
         print("File " + airports_file + "or " + flights_file + " not found")
-    for line in file1:
+    for line in air_file:
         tmp = line.split(" ")
         airport_name = tmp[0]
-        airport_coincidence = int(tmp[1])
-        new_airport = Airport(airport_name, timedelta(minutes=airport_coincidence))
-        airports.append(new_airport)
-        schedule[new_airport] = list()
+        airport_coincidence = tmp[1]
+        a = Airport(airport_name, timedelta(minutes=int(airport_coincidence)))
+        airports.append(a)
 
-    for line in file2:
+    for line in fli_file:
         tmp = line.split(" ")
-        start = int(tmp[0])
-        destination = int(tmp[1])
+        start = tmp[0]
+        destination = tmp[1]
+
         left = tmp[2]
         arrival = tmp[3]
         places = tmp[4]
-        new_flight = Flight(airports[start], airports[destination],
-                            timedelta(hours=int(left.split(":")[0]), minutes=int(left.split(":")[1])),
-                            timedelta(hours=int(arrival.split(":")[0]), minutes=int(arrival.split(":")[1])),
-                            int(places))
-
-        # new_flight = Flight(airports[start], airports[destination], time(int(left.split(":")[0]), int(left.split(":")[1])),
-        #                       time(int(arrival.split(":")[0]), int(arrival.split(":")[1])), int(places))
-        schedule[airports[start]].append(new_flight)
-    return airports, schedule
+        tmp1 = None
+        tmp2 = None
+        for a in airports:
+            if a.getName() == start:
+                tmp1 = a
+        for b in airports:
+            if b.getName() == destination:
+                tmp2 = b
+        flights.append(Flight(tmp1, tmp2,
+                              timedelta(hours=int(left.split(":")[0]), minutes=int(left.split(":")[1])),
+                              timedelta(hours=int(arrival.split(":")[0]), minutes=int(arrival.split(":")[1])),
+                              int(places)))
+    return airports, flights
 
 
 if __name__ == "__main__":
-    a, b = initialize_schedule("airports.txt", "flight.txt")
-    for air in a:
-        print(air)
-
-    for air, f in b.items():
-        print(air)
-        for pippo in f:
-            print(pippo)
+    a, f = initialize_schedule("airports.txt", "flight.txt")
+    for x in a:
+        print(x)
+    for x in f:
+        print(x)

@@ -2,7 +2,8 @@
 from typing import List
 from typing import Dict
 from TdP_collections.queue.array_queue import ArrayQueue
-from .utils import *
+# from .utils import *
+from utilss import *
 from datetime import timedelta
 
 
@@ -27,7 +28,8 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
                     arrival_time: timedelta, T: timedelta, solution: List, paths: List):
     # se ho raggiunto la destinazione posso salvare il percorso seguito
     if source == sink:
-        paths.append(solution[1])
+        paths.append(list((solution[1])))
+        # paths.append(solution[1])
     else:
         # per ogni volo in partenza dall'aeroporto in cui sono
         for flight in schedule[source]:
@@ -41,13 +43,13 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
                 solution[0] += curr_cost
                 solution[1].append(flight)
                 # valuto ricorsivamente i voli partenti dall'aeroporto appena aggiunto
-                recursive_visit(schedule, d(flight), sink, a(flight), solution, paths)
+                recursive_visit(schedule, d(flight), sink, a(flight), T, solution, paths)
                 # pulisci i dati sulla visita al ritorno dalle chiamate
                 solution[1].remove(flight)
                 solution[0] -= curr_cost
 
 
-def list_routes(schedule: Dict[Airport, Flight], source: Airport, dest: Airport, t: timedelta, T: timedelta):
+def list_routes(schedule: Dict[Airport, list], source: Airport, dest: Airport, t: timedelta, T: timedelta):
     """
     La funzione restituisce tutte le rotte che consentono di andare da a a b con un durata
     complessiva del viaggio non superiore a T e con orario di partenza successivo a t.

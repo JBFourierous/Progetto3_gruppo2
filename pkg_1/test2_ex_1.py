@@ -14,7 +14,7 @@ if __name__ == "__main__":
     start = airports[0]
     end = airports[1]
 
-    start_time = timedelta(hours=6, minutes=40)
+    start_time = timedelta(hours=6, minutes=10)
     total_time = timedelta(hours=10)
 
     paths = list_routes(schedule, start, end, start_time, total_time)
