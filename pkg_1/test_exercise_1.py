@@ -3,7 +3,7 @@ from datetime import timedelta
 from pkg_1.exercise_1 import list_routes
 
 if __name__ == "__main__":
-    airports, schedule = initialize_schedule("airports.txt", "flight.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
 
     # for airport in airports:
     #     print(airport)
