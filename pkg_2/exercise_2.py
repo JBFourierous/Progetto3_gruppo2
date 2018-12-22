@@ -3,10 +3,10 @@ from typing import List
 from typing import Dict
 from Progetto3_gruppo2.pkg_1.Airport import Airport
 from Progetto3_gruppo2.pkg_1.utils import *
-from datetime import time
+from datetime import timedelta
 
 
-def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t: time) -> List:
+def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t: timedelta) -> List:
     """
     La funzione trova la rotta che permette di arrivare da a a b nel minor tempo
     possibile, partendo ad un orario non precedente a t. (Come per l’esercizio
@@ -28,15 +28,15 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
     # fase di inizializzazione dei costi per ogni aeroporto, cioè i nodi del grafo delle rotte aeree
     for airport in airports:
         if airport == start:
-            costs[airport] = 0
+            costs[airport] = timedelta(0)
         else:
-            costs[airport] = float('inf')
+            costs[airport] = timedelta(hours=1000)
         # nella coda mantengo il riferimento ad aeroporto sorgente e destinazione, e all'istrante temporale di arrivo
         locators[airport] = q.add(costs[airport], (airport, None, t))
 
     while not q.is_empty():
         # prendi l'elemento a costo minore nella coda (aeroporto che si raggiunge con tempo minore)
-        cost, (source, flight_taken, time) = q.remove_min()
+        cost, (source, flight_taken, t_temp) = q.remove_min()
         # salva l'ultimo volo preso per ragggiungere questo aeroporto
         cloud[source] = flight_taken
         # per ogni volo che parte da questo aeroporto (per ogni arco uscente dal nodo)
@@ -44,10 +44,10 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
             # se non ho già raggiunto l'aeroporto di destinazione del volo
             if d(flight) not in cloud:
                 # se il volo è ammissibile
-                if time + c(source) <= l(flight):
+                if t_temp + c(source) <= l(flight):
                     # se il costo per arrivarci è minore di quello noto fino ad ora, aggiornalo
-                    if costs[source] + l(flight) - time + a(flight) - l(flight) < costs[d(flight)]:
-                        costs[d(flight)] = costs[source] + l(flight) - time + a(flight) - l(flight)
+                    if costs[source] + l(flight) - t_temp + a(flight) - l(flight) < costs[d(flight)]:
+                        costs[d(flight)] = costs[source] + l(flight) - t_temp + a(flight) - l(flight)
                         # nella coda mantieni ora in corrispondenza di questo aeroporto il volo per raggiungerlo e
                         # l'ora in cui ci arrivi
                         q.update(locators[d(flight)], costs[d(flight)], (d(flight), flight, a(flight)))
