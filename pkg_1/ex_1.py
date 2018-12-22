@@ -3,6 +3,7 @@ from typing import List
 from typing import Dict
 from TdP_collections.queue.array_queue import ArrayQueue
 from .utils import *
+from datetime import timedelta
 
 
 def backtracking_prune(arrival: timedelta, departure: timedelta, coincidence: timedelta, time_spent: timedelta, total: timedelta) -> bool:

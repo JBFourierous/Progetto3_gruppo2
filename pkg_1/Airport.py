@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+
 class Airport:
     """
     Classe che definisce un aeroporto, di cui si conservano le seguenti informazioni:
@@ -6,7 +9,7 @@ class Airport:
     """
     __slots__ = "name", "coincidence"
 
-    def __init__(self, name: str, coincidence: int):
+    def __init__(self, name: str, coincidence: timedelta):
         self.name = name
         self.coincidence = coincidence
 
@@ -22,6 +25,6 @@ class Airport:
     def getName(self) -> str:
         return self.name
 
-    def getCoincidence(self) -> int:
+    def getCoincidence(self) -> timedelta:
         return self.coincidence
 

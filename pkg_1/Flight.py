@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import timedelta
 from .Airport import Airport
 
 
@@ -13,7 +13,7 @@ class Flight:
     """
     __slots__ = "start", "destination", "leave", "arrival", "places"
 
-    def __init__(self, start: Airport, destination: Airport, leave: time, arrival: time, places: int):
+    def __init__(self, start: Airport, destination: Airport, leave: timedelta, arrival: timedelta, places: int):
         self.start = start
         self.destination = destination
         self.leave = leave
@@ -31,10 +31,10 @@ class Flight:
         return self.start.getName() + " " + self.getDestination().getName() + " " + str(self.getLeaveTime()) + " " + \
                str(self.getArrivalTime()) + " " + str(self.getPlaces())
 
-    def getLeaveTime(self) -> time:
+    def getLeaveTime(self) -> timedelta:
         return self.leave
 
-    def getArrivalTime(self) -> time:
+    def getArrivalTime(self) -> timedelta:
         return self.arrival
 
     def getStart(self) -> Airport:
