@@ -1,14 +1,11 @@
-from .Airport import Airport
-from .Flight import Flight
+from pkg_1.Flight import Flight, Airport
 from typing import List
 from typing import Dict
-from datetime import datetime
-from datetime import time
 from TdP_collections.queue.array_queue import ArrayQueue
 from .utils import *
 
 
-def backtracking_prune(arrival: time, departure: time, coincidence: int, time_spent: int, total: int) -> bool:
+def backtracking_prune(arrival: timedelta, departure: timedelta, coincidence: timedelta, time_spent: timedelta, total: timedelta) -> bool:
     """
     Verifica le condizioni di backtracking relative al costo del viaggio e alle coincidenze da
     rispettare
@@ -25,13 +22,14 @@ def backtracking_prune(arrival: time, departure: time, coincidence: int, time_sp
         return True
 
 
-def recursive_visit(schedule: Dict, source: Airport, sink: Airport, arrival_time: time, T: int, solution: List, paths: List):
+def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
+                    arrival_time: timedelta, T: timedelta, solution: List, paths: List):
     # se ho raggiunto la destinazione posso salvare il percorso seguito
     if source == sink:
         paths.append(solution[1])
     else:
         # per ogni volo in partenza dall'aeroporto in cui sono
-        for flight in schedule[start]:
+        for flight in schedule[source]:
             # il costo del volo è la somma del tempo di attesa per il volo e della sua durata
             curr_cost = l(flight) - arrival_time + a(flight) - l(flight)
             # il nuovo costo totale di volo è la somma del precedente e di quello calcolato per il volo corrente
@@ -50,7 +48,7 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport, arrival_time
 
 
 
-def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time, T: int):
+def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: timedelta, T: timedelta):
     """
     La funzione restituisce tutte le rotte che consentono di andare da a a b con un durata
     complessiva del viaggio non superiore a T e con orario di partenza successivo a t.
@@ -67,8 +65,8 @@ def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time,
     :return: tutte le rotte che rispettano i vincoli imposti come (quale tipo di dato?)
     """
 
-    solution = [0, []]              # mantengo come soluzione locale la coppia (costo, insieme di voli)
-    paths = {}                      # insieme dei path possibili tra gli aeroporti
+    solution = [timedelta(minutes=0), []]              # mantengo come soluzione locale la coppia (costo, insieme di voli)
+    paths = []                      # insieme dei path possibili tra gli aeroporti
 
     # costruisce un dizionario che associa ad ogni aeroporto la lista dei voli che
     # partono da tale aeroporto. Operazione con costo O(f) dove f è il numero di voli
@@ -83,7 +81,7 @@ def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time,
             flights_tmp[s(f)] = [f]
 
     # chiama la visita ricorsiva per valutare tutti i path possibili
-    recursive_visit(schedule, source, dest, t, T, solution, paths)
+    recursive_visit(flights_tmp, source, dest, t, T, solution, paths)
     return paths
 
     # questa sezione di codice inizializza i possibili path che partono dall'aeroporto richiesto.
