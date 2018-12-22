@@ -1,5 +1,5 @@
 from pkg_1.ex_1 import list_routes, Flight
-from utilss import initialize_schedule
+from utils import initialize_schedule
 from datetime import timedelta
 
 if __name__ == "__main__":
