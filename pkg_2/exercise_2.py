@@ -12,8 +12,9 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
     possibile, partendo ad un orario non precedente a t. (Come per l’esercizio
     precedente, bisogna tener conto del tempo minimo di coincidenza di ogni
     scalo).
-    :param s: orario della compagnia
-    :param a: areoporto di partenza
+    :param schedule: orario della compagnia
+    :param airports: lista degli aeroporti
+    :param start: areoporto di partenza
     :param dest: areoporto di arrivo
     :param t: orario di partenza
     :return: la rotta che rispetta i vincoli imposti
@@ -49,15 +50,14 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
                         costs[d(flight)] = costs[source] + l(flight) - time + a(flight) - l(flight)
                         # nella coda mantieni ora in corrispondenza di questo aeroporto il volo per raggiungerlo e
                         # l'ora in cui ci arrivi
+                        q.update(locators[d(flight)], costs[d(flight)], (d(flight), flight, a(flight)))
 
-    q.update(locators[d(flight)], costs[d(flight)], (d(flight), flight, a(flight)))
     # ripercorro all'indietro i voli che mi portano a destinazione
     flight_to_take = cloud[dest]
     while flight_to_take is not None:
         # costruisco la rotta della soluzione
         path.insert(0, flight_to_take)
         flight_to_take = cloud[s(flight_to_take)]
-
     return path
 
 

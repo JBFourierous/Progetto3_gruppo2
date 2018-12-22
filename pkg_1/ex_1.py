@@ -1,4 +1,4 @@
-from pkg_1.Flight import Flight, Airport
+
 from typing import List
 from typing import Dict
 from TdP_collections.queue.array_queue import ArrayQueue
@@ -47,9 +47,7 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
                 solution[0] -= curr_cost
 
 
-
-
-def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: timedelta, T: timedelta):
+def list_routes(schedule: Dict[Airport, Flight], source: Airport, dest: Airport, t: timedelta, T: timedelta):
     """
     La funzione restituisce tutte le rotte che consentono di andare da a a b con un durata
     complessiva del viaggio non superiore a T e con orario di partenza successivo a t.
@@ -67,38 +65,8 @@ def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: timed
     """
 
     solution = [timedelta(minutes=0), []]              # mantengo come soluzione locale la coppia (costo, insieme di voli)
-    paths = []                      # insieme dei path possibili tra gli aeroporti
-
-    # costruisce un dizionario che associa ad ogni aeroporto la lista dei voli che
-    # partono da tale aeroporto. Operazione con costo O(f) dove f è il numero di voli
-    # che può essere ottimizzata mantenendo i voli in una struttura dati più efficiente.
-    # scopo di queste righe è fare in modo da mantenere per l'aeroporto di partenza della
-    # funzione l'insieme di voli partenti possibili
-    flights_tmp = dict()
-    for f in schedule:
-        if s(f) in flights_tmp:
-            flights_tmp[s(f)].append(f)
-        else:
-            flights_tmp[s(f)] = [f]
+    paths = []                                         # insieme dei path possibili tra gli aeroporti
 
     # chiama la visita ricorsiva per valutare tutti i path possibili
-    recursive_visit(flights_tmp, source, dest, t, T, solution, paths)
+    recursive_visit(schedule, source, dest, t, T, solution, paths)
     return paths
-
-    # questa sezione di codice inizializza i possibili path che partono dall'aeroporto richiesto.
-    # Ha costo lineare O(f_source), dove f_source è il numero di voli che partono dalla sorgente.
-    i = 0
-    # scorri l'insieme di voli che partono dalla sorgente desiderata
-    for f in flights_tmp[source]:
-        # il costo del volo è la somma del tempo di coincidenza in aeroporto e della durata effettiva
-        # del volo
-        cost = (c(source) + a(f) - l(f))
-        # verifica che il volo soddisfi i requisiti di durata e tempo di partenza
-        # COINCIDENZA ZERO ATTENZIONE
-        if backtracking_prune(t, l(f), 0, cost, T):
-            # mantieni un riferimento al volo e alle sue informazioni
-            queue.enqueue((i, f, cost))
-            # inizializza un path vuoto possibile da questo volo
-            paths[i] = []
-            # print(str(i), str(flight), cost)
-            i += 1
