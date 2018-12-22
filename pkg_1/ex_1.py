@@ -1,6 +1,7 @@
 from .Airport import Airport
 from .Flight import Flight
 from typing import List
+from typing import Dict
 from datetime import datetime
 from datetime import time
 from TdP_collections.queue.array_queue import ArrayQueue
@@ -19,9 +20,34 @@ def backtracking_prune(arrival: time, departure: time, coincidence: int, time_sp
     :return: True se la condizione di pruning è valida, False altrimenti
     """
     if time_spent <= total and arrival + coincidence <= departure:
-        return True
-    else:
         return False
+    else:
+        return True
+
+
+def recursive_visit(schedule: Dict, source: Airport, sink: Airport, arrival_time: time, T: int, solution: List, paths: List):
+    # se ho raggiunto la destinazione posso salvare il percorso seguito
+    if source == sink:
+        paths.append(solution[1])
+    else:
+        # per ogni volo in partenza dall'aeroporto in cui sono
+        for flight in schedule[start]:
+            # il costo del volo è la somma del tempo di attesa per il volo e della sua durata
+            curr_cost = l(flight) - arrival_time + a(flight) - l(flight)
+            # il nuovo costo totale di volo è la somma del precedente e di quello calcolato per il volo corrente
+            total_cost = solution[0] + curr_cost
+            # valuto tramite backtracking se il volo può essere preso
+            if not backtracking_prune(arrival_time, l(flight), c(source), total_cost, T):
+                # in caso positivo aggiungo al path corrente la soluzione e aggiorno il costo di volo
+                solution[0] += curr_cost
+                solution[1].append(flight)
+                # valuto ricorsivamente i voli partenti dall'aeroporto appena aggiunto
+                recursive_visit(schedule, d(flight), sink, a(flight), solution, paths)
+                # pulisci i dati sulla visita al ritorno dalle chiamate
+                solution[1].remove(flight)
+                solution[0] -= curr_cost
+
+
 
 
 def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time, T: int):
@@ -41,8 +67,8 @@ def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time,
     :return: tutte le rotte che rispettano i vincoli imposti come (quale tipo di dato?)
     """
 
-    queue = ArrayQueue()
-    paths = {}
+    solution = [0, []]              # mantengo come soluzione locale la coppia (costo, insieme di voli)
+    paths = {}                      # insieme dei path possibili tra gli aeroporti
 
     # costruisce un dizionario che associa ad ogni aeroporto la lista dei voli che
     # partono da tale aeroporto. Operazione con costo O(f) dove f è il numero di voli
@@ -55,6 +81,10 @@ def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time,
             flights_tmp[s(f)].append(f)
         else:
             flights_tmp[s(f)] = [f]
+
+    # chiama la visita ricorsiva per valutare tutti i path possibili
+    recursive_visit(schedule, source, dest, t, T, solution, paths)
+    return paths
 
     # questa sezione di codice inizializza i possibili path che partono dall'aeroporto richiesto.
     # Ha costo lineare O(f_source), dove f_source è il numero di voli che partono dalla sorgente.
@@ -73,54 +103,3 @@ def list_routes(schedule: List[Flight], source: Airport, dest: Airport, t: time,
             paths[i] = []
             # print(str(i), str(flight), cost)
             i += 1
-
-    while not queue.is_empty():
-        # prendi il primo volo in coda
-        start_airport, current_flight, time_elapsed = queue.dequeue()
-        paths[start_airport].append(current_flight)
-        # print("ITERATION "+str(time_elapsed))
-        # se non sono arrivato a destinazione
-        if d(current_flight) != dest:
-            # prende il primo path in lista
-            item = paths.pop(start_airport)
-            j = len(paths)
-            for flight in flights_tmp[d(current_flight)]:
-                cost = time_elapsed + (l(flight) - a(current_flight) + a(flight) - l(flight)) # finora + attesa + volo
-                if backtracking_prune(a(current_flight), l(flight), c(d(current_flight)), cost, T):
-                    queue.enqueue((j, flight, cost))
-                    paths[j] = item.copy()
-                    # print(str(j), str(flight), cost)
-                    # print("DURATA VOLO - ", a(flight) - l(flight))
-                    # print("DURATA ATTESA - ", l(flight) - a(my_flight))
-                    j += 1
-
-    return paths
-
-
-if __name__ == "__main__":
-
-    airports,flights=read_from_file("test1")
-
-    """for airport in airports:
-        print(airport)
-
-    for flight in flights:
-        print(flight)"""
-
-    start = airports[0]
-    end = airports[3]
-    starting_time = datetime.strptime("12:00", "%H:%M").time()
-    total_time = datetime.strptime("12:00", "%H:%M").time()
-
-    start_time_minutes = starting_time.hour*60 + starting_time.minute
-    total_time_minutes = total_time.hour*60 + total_time.minute
-
-    paths = list_routes(flights,start,end,start_time_minutes,total_time_minutes)
-
-    print("\n\nPercorsi da "+str(start)+" a "+str(end)+" in "+str(total_time_minutes)+" minuti ")
-    print("Partenza alle "+str(starting_time))
-
-    for path in paths.keys():
-        print("--------------PATH----------- "+str(path))
-        for flight in paths[path]:
-            print(str(flight))
