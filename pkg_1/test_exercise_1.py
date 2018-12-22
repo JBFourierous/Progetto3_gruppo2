@@ -1,27 +1,21 @@
-from pkg_1.ex_1 import list_routes, Flight
-from utils import initialize_schedule
+from pkg_1.utils import initialize_schedule
 from datetime import timedelta
+from pkg_1.exercise_1 import list_routes
 
 if __name__ == "__main__":
-    airports, flights = initialize_schedule("air.txt", "fli.txt")
+    airports, schedule = initialize_schedule("airports.txt", "flight.txt")
 
     # for airport in airports:
     #     print(airport)
-    # for flight in flights:
-    #     print(flight)
+    # for airport, listofflights in schedule.items():
+    #     for flight in listofflights:
+    #         print(airport, "flight: ", flight)
 
     start = airports[0]
     end = airports[1]
-    # print(start)
-    # print(end)
-    schedule = dict()
-    for el in airports:
-        schedule[el] = list()
-        for f in flights:
-            if el == f.getStart():
-                schedule[el].append(f)
-    start_time = timedelta(hours=6, minutes=0)
-    total_time = timedelta(hours=1)
+
+    start_time = timedelta(hours=6, minutes=40)
+    total_time = timedelta(hours=10)
 
     paths = list_routes(schedule, start, end, start_time, total_time)
     print("\nI want to go from " + str(start.getName()) + " to " + str(end.getName()) +
