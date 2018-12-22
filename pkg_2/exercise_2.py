@@ -1,6 +1,6 @@
 from TdP_collections.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
 # from typing import List
-# from typing import Dict
+from typing import Dict
 # from pkg_1.Airport import Airport
 from pkg_1.utils import *
 from datetime import timedelta
