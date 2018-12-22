@@ -10,8 +10,14 @@ class Airport:
         self.name = name
         self.coincidence = coincidence
 
+    def __hash__(self) -> int:
+        return hash((self.name, self.coincidence))
+
     def __eq__(self, other) -> bool:
         return self.name == other.getName()
+
+    def __str__(self) -> str:
+        return self.name + " " + str(self.coincidence)
 
     def getName(self) -> str:
         return self.name

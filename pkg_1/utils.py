@@ -1,6 +1,7 @@
 from Progetto3_gruppo2.pkg_1.Flight import Flight, Airport
 from datetime import time
 from typing import List
+from typing import Dict
 
 def c(a: Airport) -> int:
     """
@@ -56,7 +57,7 @@ def p(f: Flight) -> int:
     return f.getPlaces()
 
 
-def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], List[Flight]):
+def initialize_schedule(airports_file: str, flights_file: str) -> (List[Airport], Dict[Airport, List[Flight]]):
     """
     Funzione che legge da file i dati riguardanti aeroporti e voli e inizializza l'orario della compagnia
     :param airports_file: file contenente i dati degli aeroporti
@@ -65,6 +66,7 @@ def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], Lis
     """
     airports = list()
     flights = list()
+    schedule = dict()
     file1, file2 = None, None
     try:
         file1 = open(airports_file, "r")
@@ -75,29 +77,29 @@ def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], Lis
         tmp = line.split(" ")
         airport_name = tmp[0]
         airport_coincidence = tmp[1]
-        airports.append(Airport(airport_name, int(airport_coincidence)))
+        new_airport = Airport(airport_name, int(airport_coincidence))
+        airports.append(new_airport)
+        schedule[new_airport] = list()
 
     for line in file2:
         tmp = line.split(" ")
-        start = tmp[0]
-        destination = tmp[1]
-        print(destination)
-
+        start = int(tmp[0])
+        destination = int(tmp[1])
         left = tmp[2]
         arrival = tmp[3]
         places = tmp[4]
-        tmp1 = None
-        tmp2 = None
-        for a in airports:
-            if a.getName() == start:
-                tmp1 = a
-        for b in airports:
-            if b.getName() == destination:
-                tmp2 = b
-        flights.append(Flight(tmp1, tmp2, time(int(left.split(":")[0]), int(left.split(":")[1])),
-                              time(int(arrival.split(":")[0]), int(arrival.split(":")[1])), int(places)))
-    return airports, flights
+        new_flight = Flight(airports[start], airports[destination], time(int(left.split(":")[0]), int(left.split(":")[1])),
+                              time(int(arrival.split(":")[0]), int(arrival.split(":")[1])), int(places))
+        schedule[airports[start]].append(new_flight)
+    return airports, schedule
 
 
 if __name__ == "__main__":
-    print(initialize_schedule("airports.txt", "flight.txt"))
+    a, b = initialize_schedule("airports.txt", "flight.txt")
+    for air in a:
+        print(air)
+
+    for air, f in b.items():
+        print(air)
+        for pippo in f:
+            print(pippo)
