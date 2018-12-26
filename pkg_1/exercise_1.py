@@ -1,19 +1,55 @@
-import datetime
+
+from typing import List
+from typing import Dict
+from TdP_collections.queue.array_queue import ArrayQueue
+# from .utils import *
+from pkg_1.utils import *
+from datetime import timedelta
 
 
-class Schedule:
-    def __init__(self):
-        self.airports = dict()  # airports[a] = c(a)
-        self.flights = dict()  # flights[f] = s(f), d(f), l(f), a(f), p(f)
+def backtracking_prune(arrival: timedelta, departure: timedelta, coincidence: timedelta, time_spent: timedelta, total: timedelta) -> bool:
+    """
+    Verifica le condizioni di backtracking relative al costo del viaggio e alle coincidenze da
+    rispettare
+    :param arrival: orario di arrivo di un volo
+    :param departure: orario di partenza di un volo
+    :param coincidence: tempo minimo di coincidenza in un aeroporto
+    :param time_spent: tempo di viaggio speso finora
+    :param total: tempo totale di viaggio ammesso
+    :return: True se la condizione di pruning è valida, False altrimenti
+    """
+    if time_spent <= total and arrival + coincidence <= departure:
+        return False
+    else:
+        return True
 
 
-class Route:
-    def __init__(self):
-        self.flights = list()
-        self.duration = datetime.time()
+def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
+                    arrival_time: timedelta, T: timedelta, solution: List, paths: List):
+    # se ho raggiunto la destinazione posso salvare il percorso seguito
+    if source == sink:
+        # paths.append(solution[1].copy())
+        paths.append(list((solution[1])))
+    else:
+        # per ogni volo in partenza dall'aeroporto in cui sono
+        for flight in schedule[source]:
+            # il costo del volo è la somma del tempo di attesa per il volo e della sua durata
+            curr_cost = l(flight) - arrival_time + a(flight) - l(flight)
+            # il nuovo costo totale di volo è la somma del precedente e di quello calcolato per il volo corrente
+            total_cost = solution[0] + curr_cost
+            # valuto tramite backtracking se il volo può essere preso
+            if not backtracking_prune(arrival_time, l(flight), c(source), total_cost, T):
+                # in caso positivo aggiungo al path corrente la soluzione e aggiorno il costo di volo
+                solution[0] += curr_cost
+                solution[1].append(flight)
+                # valuto ricorsivamente i voli partenti dall'aeroporto appena aggiunto
+                recursive_visit(schedule, d(flight), sink, a(flight), T, solution, paths)
+                # pulisci i dati sulla visita al ritorno dalle chiamate
+                solution[1].remove(flight)
+                solution[0] -= curr_cost
 
 
-def list_routes(s: Schedule, a: str, b: str, t: datetime.time, T: datetime.timedelta) -> list:
+def list_routes(schedule: Dict[Airport, list], source: Airport, dest: Airport, t: timedelta, T: timedelta):
     """
     La funzione restituisce tutte le rotte che consentono di andare da a a b con un durata
     complessiva del viaggio non superiore a T e con orario di partenza successivo a t.
@@ -22,73 +58,17 @@ def list_routes(s: Schedule, a: str, b: str, t: datetime.time, T: datetime.timed
     scalo bisogna considerare che non è possibile effettuare una coincidenza se tra l’orario
     di atterraggio di un volo ed il tempo di decollo del volo successivo intercorre un tempo
     inferiore a c(a).
-    :param s: orario della compagnia
-    :param a: areoporto di partenza
-    :param b: areoporto di arrivo
+    :param schedule: orario della compagnia, nella forma di insieme di voli
+    :param source: areoporto di partenza
+    :param dest: areoporto di arrivo
     :param t: orario di partenza
     :param T: intervallo di tempo
     :return: tutte le rotte che rispettano i vincoli imposti come (quale tipo di dato?)
     """
-    visited = {}
-    act_nodes = []
-    act_edges = []
-    paths = []
-    return get_all_paths(s, a, b, visited, act_nodes, act_edges, paths, t, T)
 
-def get_all_paths(schedule, source, dest, visited, act_nodes, act_edges, paths, t, T) -> list:
-    """
-    Questa funzione implementa una versione modificata di una visita DFS di un grafo salvando tutti i
-    possibili path (in termini di archi attraversati) da una sorgente a una destinazione. Si tratta di
-    una soluzione di ricerca esaustiva che per mantenere accettabili le prestazioni applica le seguenti
-    condizioni di bounding per il backtracking:
-    - se il volo di partenza ha start > t non segue l'arco
-    - se la durata della tratta parziale creata nella visita dei nodi è superiore a T scarta la soluzione
-      parizale
-    - se il tempo di coincidenza a un certo nodo della soluzione parziale è maggiore della differenza tra
-      tempo di arrivo e di partenza del nuovo volo scarta la soluzione parziale
-    :param schedule: orario della compagnia aerea
-    :param source: nodo di partenza della visita
-    :param dest: nodo destinazione da raggiungere
-    :param visited: dizionario dei nodi già visitati dato il path attuale
-    :param act_nodes: lista dei nodi nel path attuale
-    :param act_edges: lista degli archi nel path attuale
-    :param paths: lista dei possibili path che soddisfano le condizioni di ricerca
-    :param t: orario di partenza
-    :param T: intervallo di Tempo
-    :return: lista dei possibili path che soddisfano le condizioni di ricerca
-    """
-    visited[source] = True                  # segna il nodo come visitato
-    act_nodes.append(source)                # aggiungi al path il nodo sorgente
+    solution = [timedelta(minutes=0), []]              # mantengo come soluzione locale la coppia (costo, insieme di voli)
+    paths = []                                         # insieme dei path possibili tra gli aeroporti
 
-    if source == dest:                      # se hai raggiunto la destinazione salva il path locale trovato
-        paths.append(act_edges)
-    else:
-        # se non hai raggiunto la destinazione, per ogni nodo adiacente a quello che stai vistando cerca un path
-        # verso la destinazione ricorsivamente
-        for flight in schedule.incident_edges(source):
-            # verifica che il volo non parta dopo t, solo per il primo nodo
-            if len(act_edges) == 0:
-                if not (flight.getStart() > t):
-                    if not (source.getCoincidence() > flight.getLeaveTime() - act_edges[-1].getArrivalTime()):
-                        if not (act_edges[1] + source.getCoicidence() + flight.getDuration()) > T:
-                            act_edges.append(flight)
-                else:
-                    return
-            else:
-                if not (source.getCoincidence() > flight.getLeaveTime() - act_edges[-1].getArrivalTime()):
-                    if not (act_edges[1] + source.getCoicidence() + flight.getDuration()) > T:
-                        act_edges.append(flight)
-                else:
-                    return
-            if visited[flight.opposite(source)] is False:      # continua la ricerca solo se il nodo non è stato già visitato
-                get_all_paths(schedule, flight.opposite(source), dest, visited, act_nodes, act_edges, paths)
-        act_nodes.pop()                      # rimuovi il nodo e segnalo non visitato per evitare cicli
-        visited[source] = False
+    # chiama la visita ricorsiva per valutare tutti i path possibili
+    recursive_visit(schedule, source, dest, t, T, solution, paths)
     return paths
-
-if __name__ == "__main__":
-    s = Schedule()
-    s.airports = {"MXP": datetime.time(1, 30)}
-    s.flights = {4151: ("MXP", "CDG", datetime.time(6, 30), datetime.time(8, 5), 40)}
-
-    # list_routes(s, "MXP", "BGY", datetime.time(6, 30), datetime.timedelta(minutes=30))

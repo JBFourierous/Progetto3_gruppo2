@@ -22,19 +22,19 @@ def test_bipartite_connected_verified():
     B.insert_edge(v4, v5, 5)
     B.insert_edge(v5, v6, 1)
     B.insert_edge(v5, v7, 1)
+    e = B.edges()
 
     if bipartite(B) is None:
         print('Test test_bipartite_connected_verified failed')
     else:
         A, B = bipartite(B)
-        # print(A, B)
         C = set()
         D = set()
         for x in A:
             C.add(x.element())
         for y in B:
             D.add(y.element())
-        print(C,D)
+        print('Test test_bipartite_connected_verified passed')
 
 
 def test_bipartite_connected_not_verified():
@@ -83,19 +83,19 @@ def test_bipartite_unconnected_verified():
 
     B.insert_edge(v5, v6, 1)
     B.insert_edge(v5, v7, 1)
+    e = B.edges()
 
     if bipartite(B) is None:
         print('Test test_bipartite_unconnected_verified failed')
     else:
         A, B = bipartite(B)
-        # print(A, B)
         C = set()
         D = set()
         for x in A:
             C.add(x.element())
         for y in B:
             D.add(y.element())
-        print(C,D)
+        print('Test test_bipartite_unconnected_verified passed')
 
 
 def test_bipartite_unconnected_not_verified():

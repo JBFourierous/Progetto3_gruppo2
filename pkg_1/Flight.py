@@ -1,5 +1,5 @@
-from datetime import time
-from .Airport import Airport
+from datetime import timedelta
+from pkg_1.Airport import Airport
 
 
 class Flight:
@@ -13,17 +13,28 @@ class Flight:
     """
     __slots__ = "start", "destination", "leave", "arrival", "places"
 
-    def __init__(self, start: Airport, destination: Airport, leave: time, arrival: time, places: int):
+    def __init__(self, start: Airport, destination: Airport, leave: timedelta, arrival: timedelta, places: int):
         self.start = start
         self.destination = destination
         self.leave = leave
         self.arrival = arrival
         self.places = places
 
-    def getLeaveTime(self) -> time:
+    def __eq__(self, o: object) -> bool:
+        return self.start == o.getStart() and self.destination == o.getDestination() and self.leave == o.getLeaveTime() \
+                        and self.arrival == o.getArrivalTime() and self.places == o.getPlaces()
+
+    def __hash__(self) -> int:
+        return hash((self.start, self.destination, self.leave, self.arrival, self.places))
+
+    def __str__(self) -> str:
+        return self.start.getName() + " " + self.getDestination().getName() + " " + str(self.getLeaveTime()) + " " + \
+               str(self.getArrivalTime()) + " " + str(self.getPlaces())
+
+    def getLeaveTime(self) -> timedelta:
         return self.leave
 
-    def getArrivalTime(self) -> time:
+    def getArrivalTime(self) -> timedelta:
         return self.arrival
 
     def getStart(self) -> Airport:
