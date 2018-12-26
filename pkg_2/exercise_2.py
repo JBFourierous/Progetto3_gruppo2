@@ -18,7 +18,7 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
     :param t: orario di partenza
     :return: la rotta che rispetta i vincoli imposti
     Complessità computazionale O((n+m) log n), ma si può ragionevolmente assumere che
-    m >> n, per cui O(m log n), in cui n è il numero di aereoporti ed m il numero di voli
+    m >> n, per cui O(m log n), in cui n è il numero di aerporti ed m il numero di voli
     """
     path = deque()                          # insieme dei voli che costituiscono il percorso più breve
     q = AdaptableHeapPriorityQueue()        # coda a priorità per Dijkstra
@@ -33,7 +33,7 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
             costs[airport] = timedelta(0)
         else:
             costs[airport] = timedelta(hours=1000)  # sintassi per +∞
-        # nella coda mantengo il riferimento ad aeroporto sorgente, aereoporto destinazione e tempo di arrivo
+        # nella coda mantengo il riferimento ad aeroporto sorgente, aeroporto destinazione e tempo di arrivo
         # salvo il locator per futuri aggiornamenti
         # ogni inserimento nella coda al più O(log n)
         locators[airport] = q.add(costs[airport], (airport, None, t))
@@ -49,7 +49,8 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
         # esco dal ciclo
         if source == dest:
             break
-        # per ogni volo che parte da questo aeroporto, al più m
+        # per ogni volo che parte da source (aeroporto corrente)
+        # al più z, se z è il numero di voli che partono da source
         for flight in schedule[source]:
             # valuto se l'aeroporto di destinazione del volo è stato già aggiunto alla soluzione
             if d(flight) not in cloud:
