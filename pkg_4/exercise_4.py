@@ -12,15 +12,17 @@ def bipartite(G: Graph):
     Il problema corrisponde alla verifica della k-colorabilità di un grafo, cioè verificare se è possibile,
     dato un grafo non diretto, colorarlo con al più k colori in modo che non esistano due vertici adiacenti
     dello stesso colore. Nel caso il problema si riduce alla 2-colorabilità.
+    La complessità computazionale è la stessa della DFS completa, e cioè O(n+m), siccome la classe Graph
+    rappresenta il grafo utilizzando liste di adiacenza, in cui n è il numero di vertici ed m il numero di archi.
     """
-    discovered = {}                             # dizionario per tenere traccia dei nodi visitati
-    color = {}                                  # dizionario per tenere traccia dei colori dei nodi
-    X = set()                                      # partizioni del grafo
+    discovered = {}  # dizionario per tenere traccia dei nodi visitati
+    color = {}  # dizionario per tenere traccia dei colori dei nodi
+    X = set()  # partizioni del grafo
     Y = set()
     partition = None
 
     # verifica se il grafo è connesso e ne definisce le componenti connesse
-    for node in G.vertices():                   # inizializza i colori dei nodi
+    for node in G.vertices():  # inizializza i colori dei nodi
         if node not in color:
             color[node] = False
     for v in G.vertices():
@@ -50,21 +52,18 @@ def color_dfs(g, u, discovered, color):
     :param discovered: dizionario che mappa ogni nodo agli archi usati per visitarlo
     :param color: dizionario che mappa ogni nodo al suo colore
     :return: dizionario che mappa i nodi con il loro colore, None se il grafo non è bipartito
+    Complessità computazionale O(n+m)
 
-    ATTENZIONE: QUESTA IMPLEMENTAZIONE SUPPONE CHE IL GRAFO SIA CONNESSO
+    NB: Questa funzione considera il grafo in ingresso g connesso
     """
     for e in g.incident_edges(u):  # per ogni arco uscente da u
         v = e.opposite(u)
         if v not in discovered:  # v è un nodo non visitato
             color[v] = not color[u]  # assegagli il colore opposto del nodo padre
             discovered[v] = e  # aggiorna gli archi discovey
-            if color_dfs(g, v, discovered, color) is None:  # riapplica ricorsivamente verificando che il sottoinsieme è bipartito
+            if color_dfs(g, v, discovered,
+                         color) is None:  # riapplica ricorsivamente verificando che il sottoinsieme è bipartito
                 return None
         elif color[v] == color[u]:  # nodo già visitato, 2 nodi consecutivi con lo stesso colore viola la 2-colorabilità
             return None
     return color
-
-
-
-
-
