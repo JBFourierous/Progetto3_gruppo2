@@ -1,9 +1,8 @@
 from TdP_collections.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
-# from typing import List
 from typing import Dict
-# from pkg_1.Airport import Airport
-from pkg_1.utils import *
+from pkg_1.utils import Airport, List, d, l, a, c, s
 from datetime import timedelta
+from collections import deque
 
 
 def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t: timedelta) -> List:
@@ -18,46 +17,64 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
     :param dest: areoporto di arrivo
     :param t: orario di partenza
     :return: la rotta che rispetta i vincoli imposti
+    Complessità computazionale O((n+m) log n), ma si può ragionevolmente assumere che
+    m >> n, per cui O(m log n), in cui n è il numero di aerporti ed m il numero di voli
     """
-    path = list()                           # insieme dei voli che costituiscono il percorso più breve
+    path = deque()                          # insieme dei voli che costituiscono il percorso più breve
     q = AdaptableHeapPriorityQueue()        # coda a priorità per Dijkstra
     cloud = dict()                          # insieme di nodi visitati da Dijkstra con loro costo
     costs = dict()                          # dizionario dei costi ottimi valutati da Dijkstra
-    locators = dict()                       # dizionario dei locator per la coda q
+    locators = dict()                       # dizionario dei locators per la coda q
 
-    # fase di inizializzazione dei costi per ogni aeroporto, cioè i nodi del grafo delle rotte aeree
+    # fase di inizializzazione dei costi per ogni aeroporto nella lista
+    # n inserimenti => O(n log n)
     for airport in airports:
         if airport == start:
             costs[airport] = timedelta(0)
         else:
-            costs[airport] = timedelta(hours=1000)
-        # nella coda mantengo il riferimento ad aeroporto sorgente e destinazione, e all'istrante temporale di arrivo
+            costs[airport] = timedelta(hours=1000)  # sintassi per +∞
+        # nella coda mantengo il riferimento ad aeroporto sorgente, aeroporto destinazione e tempo di arrivo
+        # salvo il locator per futuri aggiornamenti
+        # ogni inserimento nella coda richiede O(log n)
         locators[airport] = q.add(costs[airport], (airport, None, t))
 
+    # la valutazione della coda vuota prende tempo 0(1)
+    # le operazioni nel ciclo vengono effettuate per tutti gli aeroporti nella coda, per cui:
+    #       O(n log n) per la remove_min
+    #       O(∑z log n) = O(m log n) per le operazioni contenute nel for
     while not q.is_empty():
         # prendi l'elemento a costo minore nella coda (aeroporto che si raggiunge con tempo minore)
+        # ogni remove_min richiede O(log n)
         cost, (source, flight_taken, t_temp) = q.remove_min()
-        # salva l'ultimo volo preso per ragggiungere questo aeroporto
+        # salva l'ultimo volo preso per raggiungere questo aeroporto
         cloud[source] = flight_taken
-        # per ogni volo che parte da questo aeroporto (per ogni arco uscente dal nodo)
+        # se ho raggiunto la destinazione, Dijkstra mi assicura che questo è il percorso più breve
+        # esco dal ciclo
+        if source == dest:
+            break
+        # per ogni volo che parte da source (aeroporto corrente)
+        # al più z, se z è il numero di voli che partono da source
         for flight in schedule[source]:
-            # se non ho già raggiunto l'aeroporto di destinazione del volo
+            # valuto se l'aeroporto di destinazione del volo è stato già aggiunto alla soluzione
             if d(flight) not in cloud:
-                # se il volo è ammissibile
+                # valuto se il volo rientra nei vincoli temporali
                 if t_temp + c(source) <= l(flight):
-                    # se il costo per arrivarci è minore di quello noto fino ad ora, aggiornalo
+                    # se il costo per arrivare in d(f) è minore di quello noto fino ad ora, aggiornalo
                     if costs[source] + l(flight) - t_temp + a(flight) - l(flight) < costs[d(flight)]:
                         costs[d(flight)] = costs[source] + l(flight) - t_temp + a(flight) - l(flight)
-                        # nella coda mantieni ora in corrispondenza di questo aeroporto il volo per raggiungerlo e
-                        # l'ora in cui ci arrivi
+                        # nella coda mantieni in corrispondenza di questo aeroporto (key) il volo per
+                        # raggiungerlo e l'ora in cui ci arrivi, che è il relativo tempo di arrivo
+                        # la modifica della key di un elemento richiede tempo O(log n)
                         q.update(locators[d(flight)], costs[d(flight)], (d(flight), flight, a(flight)))
 
-    # ripercorro all'indietro i voli che mi portano a destinazione
+    # ripercorro all'indietro i voli che mi portano a destinazione per costruire la rotta della soluzione
+    # si utilizza una deque (double-ended queue) che è rappresentata internamente come una lista doppiamente linkata,
+    # in modo da avere l'inserimento in testa più efficiente possibile e cioè O(1)
+    # nel caso peggiore potrebbero essere inseriti m elementi, con complessità totale O(m)
     flight_to_take = cloud[dest]
     while flight_to_take is not None:
-        # costruisco la rotta della soluzione
-        path.insert(0, flight_to_take)
+        path.appendleft(flight_to_take)
         flight_to_take = cloud[s(flight_to_take)]
-    return path
-
+    # cast a lista richiede O(n) con n numero di elementi nella collezione
+    return list(path)
 
