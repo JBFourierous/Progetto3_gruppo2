@@ -29,15 +29,15 @@ def get_cost(time_departeur, time_arrive):
     cost = ((hour_arrive - hour_departeur) % 24) * 60 + (min_arrive - min_depaurteur) % 60
     return cost
 
-def select_flight(airports: dict, flights, B:int):
+def select_flight(airports, flights, B:int):
     table = [[0 for w in range(B + 1)] for j in range(len(flights) + 1)]
     money = {}
-    for airport in airports.keys():
+    for airport in airports:
         money[airport] = 0
 
     for j in range(1, len(flights) + 1):
         for w in range(1, B + 1):
-            departeur, arrive, time_departeur, time_arrive, places = flight[j-1]
+            departeur, arrive, time_departeur, time_arrive, places = flights[j-1]
             cost = get_cost(time_departeur, time_arrive)
             if cost > w:
                 table[j][w] = table[j - 1][w]
@@ -55,9 +55,9 @@ def select_flight(airports: dict, flights, B:int):
         was_added = table[j][w] != table[j - 1][w]
 
         if was_added:
-            departeur, arrive, time_departeur, time_arrive, places = flight[j-1]
+            departeur, arrive, time_departeur, time_arrive, places = flights[j-1]
             cost = get_cost(time_departeur, time_arrive)
-            result.append(flight[j - 1])
+            result.append(flights[j - 1])
             w -= cost
         j -= 1
     for elem in result:
@@ -70,26 +70,15 @@ def select_flight(airports: dict, flights, B:int):
 
     return result,money
 
-keys = []
-value = []
-flight = []
-try:
-    file = open('airports.txt')
-    file_2 = open('flight.txt')
-except FileNotFoundError:
-    print("File not found")
-for line in file:
-    tmp = line.strip().split(" ")
-    keys.append(tmp[0])
-    value.append(tmp[1])
-airport = dict(zip(keys, value))
 
-for line in file_2:
-    tmp = line.strip().split(" ")
-    flight.append(tmp)
-
-result, money = select_flight(airport,flight,600)
+a, f = initialize_schedule("../airports.txt", "../flights.txt")
+lista = []
+for air, c in f.items():
+    for pippo in c:
+        print(l(pippo))
+result, money = select_flight(a,f,600)
 for e in result:
     print(e)
 for e in money.values():
     print(e)
+
