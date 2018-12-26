@@ -27,7 +27,7 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
     locators = dict()                       # dizionario dei locators per la coda q
 
     # fase di inizializzazione dei costi per ogni aeroporto nella lista
-    # n inserimenti => O(nlogn)
+    # n inserimenti => O(n log n)
     for airport in airports:
         if airport == start:
             costs[airport] = timedelta(0)
@@ -35,13 +35,16 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
             costs[airport] = timedelta(hours=1000)  # sintassi per +∞
         # nella coda mantengo il riferimento ad aeroporto sorgente, aeroporto destinazione e tempo di arrivo
         # salvo il locator per futuri aggiornamenti
-        # ogni inserimento nella coda al più O(log n)
+        # ogni inserimento nella coda richiede O(log n)
         locators[airport] = q.add(costs[airport], (airport, None, t))
 
-    # la valutazione della lista vuota prende tempo 0(1), gli elementi nella lista sono n
+    # la valutazione della coda vuota prende tempo 0(1)
+    # le operazioni nel ciclo vengono effettuate per tutti gli aeroporti nella coda, per cui:
+    #       O(n log n) per la remove_min
+    #       O(∑z log n) = O(m log n) per le operazioni contenute nel for
     while not q.is_empty():
         # prendi l'elemento a costo minore nella coda (aeroporto che si raggiunge con tempo minore)
-        # ogni remove_min al più O(log n)
+        # ogni remove_min richiede O(log n)
         cost, (source, flight_taken, t_temp) = q.remove_min()
         # salva l'ultimo volo preso per raggiungere questo aeroporto
         cloud[source] = flight_taken
