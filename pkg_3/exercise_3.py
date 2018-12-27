@@ -1,4 +1,6 @@
 from pkg_1.exercise_1 import *
+from pkg_1.utils import initialize_schedule, p, s
+
 """
 Un volo consuma 60kg di gasolio per ogni ora di volo e prima del decollo la compagnia deve 
 acquistare dal gestore dell’areoporto il gasolio necessario per il volo. Si assuma che ogni kg di 
@@ -9,12 +11,12 @@ amministratori della compagnia devono decidere quali voli far partire e quali ca
 
 
 # La funzione seleziona quali voli far decollare in modo da massimizzare il numero complessivo di
-#posti disponibili. Inoltre, la funzione deve restituire per ogni areoporto a quanti soldi devono
-#essere assegnati al responsabile dello scalo per pagare il gasolio necessario per tutti i voli
-#in partenza da a.
-#:param s: orario della compagnia
-#:param B: budget del carburante
-#:return: dict (?) contenente {aereoporto: soldi assegnati per il carburante}
+# posti disponibili. Inoltre, la funzione deve restituire per ogni areoporto a quanti soldi devono
+# essere assegnati al responsabile dello scalo per pagare il gasolio necessario per tutti i voli
+# in partenza da a.
+# :param s: orario della compagnia
+# :param B: budget del carburante
+# :return: dict (?) contenente {aereoporto: soldi assegnati per il carburante}
 
 
 def get_cost(time_departeur, time_arrive):
@@ -27,22 +29,24 @@ def get_cost(time_departeur, time_arrive):
     cost = ((hour_arrive - hour_departeur) % 24) * 60 + (min_arrive - min_depaurteur) % 60
     return cost
 
-def select_flight(airports, flights, B:int):
+
+def select_flight(airports, flights, B: int):
     lista = []
     for air, c in flights.items():
         for pippo in c:
-            lista.append(pippo) #mi creo la lista di voli
+            lista.append(pippo)  # mi creo la lista di voli
 
-    table = [[0 for w in range(B + 1)] for j in range(len(lista) + 1)] #inizializzo la tabella dove devono essere memorizzati i valori
-    money = {} #dizionario in cui per ogni areoporto verrà riportato il costo in euro da spendere
+    table = [[0 for w in range(B + 1)] for j in
+             range(len(lista) + 1)]  # inizializzo la tabella dove devono essere memorizzati i valori
+    money = {}  # dizionario in cui per ogni areoporto verrà riportato il costo in euro da spendere
     for airport in airports:
         money[airport] = 0
 
     for j in range(1, len(lista) + 1):
         for w in range(1, B + 1):
-            time_departeur = l(lista[j-1])
-            time_arrive = a(lista[j-1])
-            places = p(lista[j-1])
+            time_departeur = l(lista[j - 1])
+            time_arrive = a(lista[j - 1])
+            places = p(lista[j - 1])
             cost = get_cost(time_departeur, time_arrive)
             if cost > w:
                 table[j][w] = table[j - 1][w]
@@ -50,8 +54,8 @@ def select_flight(airports, flights, B:int):
                 table[j][w] = max(table[j - 1][w],
                                   table[j - 1][w - cost] + int(places))
 
-    print('\n'.join([''.join(['{:7}'.format(item) for item in row])
-                     for row in table]))
+    # print('\n'.join([''.join(['{:7}'.format(item) for item in row])
+    #                  for row in table]))
     result = []
     w = B
     j = len(lista)
@@ -78,7 +82,7 @@ def select_flight(airports, flights, B:int):
         else:
             money[departeur] += cost
 
-    return result,money,total_cost
+    return result, money, total_cost
 
 
 airports, flights = initialize_schedule("../airports.txt", "../flights.txt")
@@ -91,4 +95,3 @@ for e in money.values():
     print(e)
 print("costo totale")
 print(total_cost)
-

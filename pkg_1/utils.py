@@ -1,5 +1,5 @@
 from pkg_1.Flight import Flight, Airport
-from typing import List
+from typing import List, Dict
 from datetime import timedelta
 
 
@@ -57,7 +57,7 @@ def p(f: Flight) -> int:
     return f.getPlaces()
 
 
-def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], List[Flight]):
+def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], Dict):
     """
     Funzione che legge da file i dati riguardanti aeroporti e voli e inizializza l'orario della compagnia
     :param airports_file: file contenente i dati degli aeroporti

@@ -21,11 +21,10 @@ def bipartite(G: Graph):
     Y = set()
     partition = None
 
-    # verifica se il grafo è connesso e ne definisce le componenti connesse
     for node in G.vertices():  # inizializza i colori dei nodi
         if node not in color:
             color[node] = False
-    for v in G.vertices():
+    for v in G.vertices():     # tiene conto di grafi non connessi
         if v not in discovered:
             partition = color_dfs(G, v, discovered, color)
             if partition is None:

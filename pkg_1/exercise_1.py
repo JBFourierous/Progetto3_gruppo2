@@ -1,9 +1,7 @@
 
 from typing import List
 from typing import Dict
-from TdP_collections.queue.array_queue import ArrayQueue
-# from .utils import *
-from pkg_1.utils import *
+from pkg_1.utils import a, l, d, c, Airport
 from datetime import timedelta
 
 
@@ -49,7 +47,7 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
                 solution[0] -= curr_cost
 
 
-def list_routes(schedule: Dict[Airport, list], source: Airport, dest: Airport, t: timedelta, T: timedelta):
+def list_routes(schedule: Dict[Airport, list], source: Airport, dest: Airport, t: timedelta, T: timedelta) -> list:
     """
     La funzione restituisce tutte le rotte che consentono di andare da a a b con un durata
     complessiva del viaggio non superiore a T e con orario di partenza successivo a t.
@@ -63,7 +61,7 @@ def list_routes(schedule: Dict[Airport, list], source: Airport, dest: Airport, t
     :param dest: areoporto di arrivo
     :param t: orario di partenza
     :param T: intervallo di tempo
-    :return: tutte le rotte che rispettano i vincoli imposti come (quale tipo di dato?)
+    :return: tutte le rotte che rispettano i vincoli imposti come lista
     """
 
     solution = [timedelta(minutes=0), []]              # mantengo come soluzione locale la coppia (costo, insieme di voli)

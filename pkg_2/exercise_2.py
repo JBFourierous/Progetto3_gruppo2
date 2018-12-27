@@ -5,7 +5,7 @@ from datetime import timedelta
 from collections import deque
 
 
-def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t: timedelta) -> List:
+def find_route(schedule: Dict, start: Airport, dest: Airport, t: timedelta) -> List:
     """
     La funzione trova la rotta che permette di arrivare da a a b nel minor tempo
     possibile, partendo ad un orario non precedente a t. (Come per l’esercizio
@@ -18,7 +18,7 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
     :param t: orario di partenza
     :return: la rotta che rispetta i vincoli imposti
     Complessità computazionale O((n+m) log n), ma si può ragionevolmente assumere che
-    m >> n, per cui O(m log n), in cui n è il numero di aerporti ed m il numero di voli
+    m >> n, per cui O(m log n), in cui n è il numero di aeroporti ed m il numero di voli
     """
     path = deque()                          # insieme dei voli che costituiscono il percorso più breve
     q = AdaptableHeapPriorityQueue()        # coda a priorità per Dijkstra
@@ -28,7 +28,7 @@ def find_route(schedule: Dict, airports: List, start: Airport, dest: Airport, t:
 
     # fase di inizializzazione dei costi per ogni aeroporto nella lista
     # n inserimenti => O(n log n)
-    for airport in airports:
+    for airport in schedule.keys():
         if airport == start:
             costs[airport] = timedelta(0)
         else:
