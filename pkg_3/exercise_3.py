@@ -31,6 +31,8 @@ def get_cost(time_departeur, time_arrive):
 
 
 def select_flight(airports, flights, B: int):
+    if B <= 0:
+        return None,None,0
     lista = []
     for air, c in flights.items():
         for pippo in c:
@@ -83,15 +85,3 @@ def select_flight(airports, flights, B: int):
             money[departeur] += cost
 
     return result, money, total_cost
-
-
-airports, flights = initialize_schedule("../airports.txt", "../flights.txt")
-result, money, total_cost = select_flight(airports, flights, 750)
-print("lista dei voli che devono partire")
-for e in result:
-    print(e)
-print("totale dei soldi per ogni aeroporto")
-for e in money.values():
-    print(e)
-print("costo totale")
-print(total_cost)
