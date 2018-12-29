@@ -6,8 +6,8 @@ from pkg_1.utils import l, a
 
 
 def test_path_available_check_it_is_the_shortest():
-    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
-    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    #airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[0]
     end = airports[1]
@@ -51,8 +51,8 @@ def test_path_available_check_it_is_the_shortest():
 
 
 def test_another_path_available_check_it_is_the_shortest():
-    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
-    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    #airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[6]  # FCO
     end = airports[0]  # LHR
@@ -93,8 +93,8 @@ def test_another_path_available_check_it_is_the_shortest():
 
 
 def test_no_flight_available():
-    # airports, schedule = initialize_schedule("../airports.txt", "../fli.txt")
-    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    #airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     shift = datetime.strptime(
         "29-12-2018", "%d-%m-%Y") - datetime.strptime(
