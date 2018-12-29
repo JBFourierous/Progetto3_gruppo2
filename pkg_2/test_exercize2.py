@@ -14,7 +14,6 @@ def test_path_available_check_it_is_the_shortest():
     start_time = timedelta(hours=12, minutes=00)
 
     path = find_route(schedule=schedule,
-                      airports=airports,
                       start=start,
                       dest=end,
                       t=start_time)
@@ -55,7 +54,6 @@ def test_another_path_available_check_it_is_the_shortest():
     start_time = timedelta(hours=6, minutes=00)
 
     path = find_route(schedule=schedule,
-                      airports=airports,
                       start=start,
                       dest=end,
                       t=start_time)
@@ -93,7 +91,6 @@ def test_no_flight_available():
     start_time = timedelta(hours=8, minutes=00)
 
     paths = find_route(schedule=schedule,
-                       airports=airports,
                        start=start,
                        dest=end,
                        t=start_time)
