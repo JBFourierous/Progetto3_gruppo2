@@ -5,8 +5,8 @@ from pkg_1.utils import l, a
 
 
 def test_paths_available():
-    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
-    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    # airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[0]
     end = airports[1]
@@ -41,8 +41,8 @@ def test_paths_available():
 
 
 def test_other_paths_available():
-    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
-    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    #airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[6]  # FCO
     end = airports[0]    # LHR
@@ -76,8 +76,8 @@ def test_other_paths_available():
 
 
 def test_no_flight_available():
-    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
-    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    #airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[0]
     end = airports[1]

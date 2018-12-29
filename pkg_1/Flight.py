@@ -47,6 +47,8 @@ class Flight:
         evaluate_date = self.getDate() - datetime.strptime(
             "1-1-" + str(self.getDate().year),
             "%d-%m-%Y")
+        if self.leave > self.arrival:
+            evaluate_date += timedelta(days=1)
         return self.arrival + evaluate_date
 
     def getStart(self) -> Airport:

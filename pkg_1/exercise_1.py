@@ -16,6 +16,8 @@ def backtracking_prune(arrival: timedelta, departure: timedelta, coincidence: ti
     :param total: tempo totale di viaggio ammesso
     :return: True se la condizione di pruning è valida, False altrimenti
     """
+
+    #print(time_spent)
     if arrival is None or departure is None or time_spent is None or coincidence is None or total is None:
         print('Time is None')
         exit(1)
@@ -35,7 +37,7 @@ def recursive_visit(schedule: Dict, source: Airport, sink: Airport,
         # per ogni volo in partenza dall'aeroporto in cui sono
         for flight in schedule[source]:
             # il costo del volo è la somma del tempo di attesa per il volo e della sua durata
-            curr_cost = l(flight) - arrival_time + a(flight) - l(flight)
+            curr_cost = l(flight) - arrival_time + abs(a(flight) - l(flight))
             # il nuovo costo totale di volo è la somma del precedente e di quello calcolato per il volo corrente
             total_cost = solution[0] + curr_cost
             # valuto tramite backtracking se il volo può essere preso

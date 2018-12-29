@@ -87,7 +87,11 @@ def initialize_schedule(airports_file: str, flights_file) -> (List[Airport], Dic
         left = tmp[2]
         arrival = tmp[3]
         places = tmp[4]
+        day = int(tmp[5])
+        month = int(tmp[6])
+        year = int(tmp[7])
         new_flight = Flight(airports[start], airports[destination],
+                            datetime(year=year, month=month, day=day),
                             timedelta(hours=int(left.split(":")[0]), minutes=int(left.split(":")[1])),
                             timedelta(hours=int(arrival.split(":")[0]), minutes=int(arrival.split(":")[1])),
                             int(places))
