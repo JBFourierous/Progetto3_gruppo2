@@ -1,17 +1,22 @@
-from pkg_1.utils import initialize_schedule
-from datetime import timedelta
+from pkg_1.utils import initialize_schedule, init_schedule_with_date
+from datetime import timedelta, datetime
 from pkg_2.exercise_2 import find_route
 from pkg_1.exercise_1 import list_routes
 from pkg_1.utils import l, a
 
 
 def test_path_available_check_it_is_the_shortest():
-    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[0]
     end = airports[1]
 
-    start_time = timedelta(hours=12, minutes=00)
+    shift = datetime.strptime(
+        "29-12-2018", "%d-%m-%Y") - datetime.strptime(
+        "1-1-2018","%d-%m-%Y")
+
+    start_time = timedelta(hours=12, minutes=00) + shift
 
     path = find_route(schedule=schedule,
                       start=start,
@@ -36,7 +41,7 @@ def test_path_available_check_it_is_the_shortest():
                         dest=end,
                         t=start_time,
                         T=cost)
-    if len(path) != 1:
+    if len(paths[0]) != 1:
         print("Test test_path_available_check_it_is_the_shortest failed")
     else:
         if str(paths[0][0]) == str(path[0]):
@@ -46,12 +51,16 @@ def test_path_available_check_it_is_the_shortest():
 
 
 def test_another_path_available_check_it_is_the_shortest():
-    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    # airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
 
     start = airports[6]  # FCO
     end = airports[0]  # LHR
 
-    start_time = timedelta(hours=6, minutes=00)
+    shift = datetime.strptime(
+        "29-12-2018", "%d-%m-%Y") - datetime.strptime(
+        "1-1-2018", "%d-%m-%Y")
+    start_time = timedelta(hours=6, minutes=00) + shift
 
     path = find_route(schedule=schedule,
                       start=start,
@@ -84,11 +93,16 @@ def test_another_path_available_check_it_is_the_shortest():
 
 
 def test_no_flight_available():
-    airports, schedule = initialize_schedule("../airports.txt", "../flights.txt")
+    # airports, schedule = initialize_schedule("../airports.txt", "../fli.txt")
+    airports, schedule = init_schedule_with_date("../airports.txt", "../fli.txt")
+
+    shift = datetime.strptime(
+        "29-12-2018", "%d-%m-%Y") - datetime.strptime(
+        "1-1-2018", "%d-%m-%Y")
     start = airports[8]  # OSL
     end = airports[7]    # SVO
 
-    start_time = timedelta(hours=8, minutes=00)
+    start_time = timedelta(hours=8, minutes=00) + shift
 
     paths = find_route(schedule=schedule,
                        start=start,

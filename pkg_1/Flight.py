@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from pkg_1.Airport import Airport
 
 
@@ -11,11 +11,12 @@ class Flight:
     arrival: orario di arrivo
     places: numero di posti disponibili sul volo
     """
-    __slots__ = "start", "destination", "leave", "arrival", "places"
+    __slots__ = "start", "destination", "date", "leave", "arrival", "places"
 
-    def __init__(self, start: Airport, destination: Airport, leave: timedelta, arrival: timedelta, places: int):
+    def __init__(self, start: Airport, destination: Airport, date: datetime, leave: timedelta, arrival: timedelta, places: int):
         self.start = start
         self.destination = destination
+        self.date = date
         self.leave = leave
         self.arrival = arrival
         self.places = places
@@ -28,14 +29,25 @@ class Flight:
         return hash((self.start, self.destination, self.leave, self.arrival, self.places))
 
     def __str__(self) -> str:
-        return self.start.getName() + " " + self.getDestination().getName() + " " + str(self.getLeaveTime()) + " " + \
-               str(self.getArrivalTime()) + " " + str(self.getPlaces())
+        return self.start.getName() + " " + self.getDestination().getName() + " " +\
+               str(datetime.strftime(self.getDate(), "%Y/%m/%d")) + " " + str(self.leave) + " " + \
+               str(self.arrival) + " " + str(self.getPlaces())
+
+    def getDate(self) -> datetime:
+        return self.date
 
     def getLeaveTime(self) -> timedelta:
-        return self.leave
+        evaluate_date = self.getDate() - datetime.strptime(
+            "1-1-"+str(self.getDate().year),
+            "%d-%m-%Y")
+        # print(isinstance(self.leave + evaluate_date, timedelta))
+        return self.leave + evaluate_date
 
     def getArrivalTime(self) -> timedelta:
-        return self.arrival
+        evaluate_date = self.getDate() - datetime.strptime(
+            "1-1-" + str(self.getDate().year),
+            "%d-%m-%Y")
+        return self.arrival + evaluate_date
 
     def getStart(self) -> Airport:
         return self.start

@@ -1,7 +1,7 @@
 
 from typing import List
 from typing import Dict
-from pkg_1.utils import a, l, d, c, Airport
+from pkg_1.utils import a, l, d, c, Airport, Flight
 from datetime import timedelta
 
 
@@ -16,7 +16,10 @@ def backtracking_prune(arrival: timedelta, departure: timedelta, coincidence: ti
     :param total: tempo totale di viaggio ammesso
     :return: True se la condizione di pruning è valida, False altrimenti
     """
-    if time_spent <= total and arrival + coincidence <= departure:
+    if arrival is None or departure is None or time_spent is None or coincidence is None or total is None:
+        print('Time is None')
+        exit(1)
+    elif time_spent <= total and arrival + coincidence <= departure:
         return False
     else:
         return True
